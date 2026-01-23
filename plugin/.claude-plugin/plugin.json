@@ -19,16 +19,5 @@
     "commerce-as-code",
     "product-management",
     "store-configuration"
-  ],
-  "engines": {
-    "claude-code": ">=1.0.0"
-  },
-  "schemas": {
-    "config": "./schemas/config.schema.json"
-  },
-  "categories": [
-    "e-commerce",
-    "configuration",
-    "development-tools"
   ]
 }

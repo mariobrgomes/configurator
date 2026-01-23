@@ -67,10 +67,41 @@ Both servers are optional - the plugin works fully without them using embedded k
 | `/configurator-workflow` | Complete multi-phase workflow: discovery → setup → import → review → deploy |
 | `/configurator-init` | Initialize config.yml with correct structure (skeleton template) |
 | `/configurator-setup` | Interactive wizard for creating new store configurations |
+| `/configurator-model` | **Product modeling wizard** - design ProductTypes and attributes interactively |
 | `/configurator-edit` | Menu-driven modification of existing configurations |
 | `/configurator-validate` | Schema validation + best practices + common mistakes check |
 | `/configurator-review` | Launch comprehensive configuration review agent |
 | `/configurator-import` | Import products from CSV, Excel, or Shopify exports |
+
+### Domain Modeling
+
+New to Saleor domain modeling? Use `/configurator-model` or ask questions like:
+
+- "How do I model my products?"
+- "What should be a product vs variant attribute?"
+- "When to use DROPDOWN vs MULTISELECT?"
+- "When to use Models vs Attributes?"
+- "How do I create custom entities like Brands?"
+- "Categories vs Collections - which should I use?"
+- "How do I build navigation Structures?"
+
+The **product-modeling** skill provides comprehensive guidance for:
+
+| Entity Type | Use For |
+|-------------|---------|
+| **ProductTypes + Attributes** | Product structure, variants, SKUs |
+| **Models (Pages)** | Custom entities: Brands, Scent Profiles, Ingredients |
+| **Categories** | Hierarchical product taxonomy (1 product = 1 category) |
+| **Collections** | Curated groups, promotions (1 product = N collections) |
+| **Structures (Menus)** | Navigation linking Categories, Collections, Models |
+
+**Key decision frameworks:**
+- Product vs variant attribute classification
+- Attribute type selection (12 types)
+- Variant matrix calculations (SKU explosion prevention)
+- When to use Models vs simple Attributes
+- Categories vs Collections decision tree
+- 10+ industry-specific patterns
 
 ### Recommended Workflow
 
@@ -96,6 +127,7 @@ Skills provide embedded knowledge that Claude uses automatically:
 | **saleor-domain** | Saleor entities, relationships, GraphQL |
 | **configurator-recipes** | Store templates, pre-built configs |
 | **data-importer** | Import workflows, field mapping, CSV/Excel handling |
+| **product-modeling** | "how do I model?", product vs variant attributes, attribute types |
 
 ## Agents
 
