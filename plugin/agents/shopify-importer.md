@@ -1,22 +1,40 @@
 ---
 name: shopify-importer
-description: Import Shopify product exports with automatic variant grouping. Handles Handle-based product grouping and Option columns. Use when importing from Shopify.
+description: Specialized Shopify product export importer with automatic variant grouping by Handle column. Understands Shopify's row-per-variant structure and Option1/Option2/Option3 columns. Use specifically for Shopify exports - for other CSV formats, use csv-importer instead.
 
 <example>
-Context: User has exported products from Shopify
+Context: User has exported products from Shopify and mentions the source.
 user: "I exported my products from Shopify, here's the CSV"
-assistant: "I'll use the shopify-importer agent to handle the Shopify format, which groups variants by Handle and uses Option columns for variant attributes."
+assistant: "I'll use the shopify-importer agent since this is a Shopify export. It understands Shopify's format - grouping variants by Handle, extracting product data from the first row of each Handle, and converting Option columns to Saleor variant attributes."
 <commentary>
-Shopify exports have specific structure (Handle, Title, Option1 Name/Value). Use specialized agent.
+Explicit Shopify source. The shopify-importer knows that Shopify uses Handle to group variants, Title only appears on the first row, and Option1/Option2/Option3 columns define variant attributes. This specialized knowledge enables automatic mapping without user intervention.
 </commentary>
 </example>
 
 <example>
-Context: User mentions migrating from Shopify
+Context: User mentions migrating from Shopify to Saleor.
 user: "I'm migrating from Shopify to Saleor, can you import my product catalog?"
-assistant: "I'll use the shopify-importer agent to convert your Shopify export to Saleor's config.yml format."
+assistant: "I'll use the shopify-importer agent for your Shopify migration. First, export your products from Shopify Admin (Products → Export → CSV for All products), then share the file and I'll convert it to Saleor's config.yml format."
 <commentary>
-Migration from Shopify triggers this specialized importer.
+Shopify migration context. The agent provides guidance on how to export from Shopify if the user hasn't already, then handles the conversion with minimal user input due to understanding Shopify's standard format.
+</commentary>
+</example>
+
+<example>
+Context: File has Shopify-specific columns detected.
+user: "Import this products.csv file"
+assistant: "I can see this file has Shopify-specific columns (Handle, Title, Option1 Name, Option1 Value). I'll use the shopify-importer agent which understands this format and can automatically group variants by Handle."
+<commentary>
+Auto-detection of Shopify format. When columns like "Handle", "Option1 Name", "Option1 Value" are present, this indicates a Shopify export and the specialized agent should be used.
+</commentary>
+</example>
+
+<example>
+Context: User has Shopify export with multiple product types.
+user: "My Shopify export has T-Shirts, Pants, and Accessories all in one CSV"
+assistant: "I'll use the shopify-importer agent to process this. It will group products by the 'Type' column to create appropriate Saleor product types, and extract variant attributes from your Option columns (like Size and Color)."
+<commentary>
+Multi-type Shopify export. The agent creates product types from Shopify's Type column and correctly maps variant attributes from Option columns, handling the complexity of mixed product types.
 </commentary>
 </example>
 

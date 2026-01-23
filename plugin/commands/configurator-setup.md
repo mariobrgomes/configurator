@@ -1,12 +1,34 @@
 ---
+name: configurator-setup
 description: Interactive guided setup wizard for creating new Saleor store configurations from scratch
-allowed-tools: Bash, Read, Write, Edit, AskUserQuestion, Glob
+allowed-tools: Bash, Read, Write, Edit, AskUserQuestion, Glob, TaskCreate, TaskUpdate, TaskList
 argument-hint: [business-type]
+disable-model-invocation: true
 ---
 
 # Configurator Setup Wizard
 
 You are guiding the user through creating a new Saleor store configuration. This is an interactive wizard that creates a valid `config.yml` file.
+
+## Progress Tracking
+
+Create tasks to track wizard progress so the user can see clear status:
+
+```
+Use TaskCreate to create these tasks at the start:
+1. "Select business type" - activeForm: "Selecting business type"
+2. "Configure channels" - activeForm: "Configuring channels"
+3. "Define product types" - activeForm: "Defining product types"
+4. "Create category hierarchy" - activeForm: "Creating categories"
+5. "Add optional features" - activeForm: "Adding features"
+6. "Generate config.yml" - activeForm: "Generating configuration"
+7. "Review and confirm" - activeForm: "Reviewing configuration"
+
+Update task status as you progress:
+- Set to in_progress when starting a step
+- Set to completed when step finishes
+- User sees clear progress throughout the wizard
+```
 
 ## Context Detection
 
@@ -139,7 +161,7 @@ Ask for confirmation before writing the file.
 
 After creating config.yml:
 
-1. Suggest reviewing with `/configurator-review`
+1. **Proactively launch config-review agent** to validate the generated configuration
 2. Explain how to add products manually or via introspect
 3. Explain deployment process:
    ```bash
@@ -149,6 +171,8 @@ After creating config.yml:
    # Deploy
    npx configurator deploy --url=$SALEOR_API_URL --token=$SALEOR_TOKEN
    ```
+
+**Important**: Always invoke the config-review agent after setup completes to catch any issues before the user attempts deployment.
 
 ## Business Type Templates
 

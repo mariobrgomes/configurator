@@ -1,6 +1,7 @@
 ---
 name: data-importer
-description: Transform external product data into Saleor config.yml. Handles CSV, Excel, Shopify, and unknown formats through interactive mapping. Use when user mentions "import", "migrate", "convert", "upload products", or has external product data.
+version: 1.0.0
+description: Provides comprehensive guidance for transforming external product data into Saleor config.yml format. This skill should be invoked when the user needs to import products from CSV files, Excel spreadsheets, Shopify exports, or any external data source. Covers file format detection, column mapping strategies, variant grouping, and output validation.
 allowed-tools: Bash, Read, Write, Edit, AskUserQuestion, Glob
 ---
 

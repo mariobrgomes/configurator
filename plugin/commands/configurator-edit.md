@@ -1,4 +1,5 @@
 ---
+name: configurator-edit
 description: Interactive menu for modifying existing Saleor store configurations
 allowed-tools: Read, Write, Edit, AskUserQuestion, Grep, Glob
 argument-hint: [entity-type]

@@ -1,22 +1,40 @@
 ---
 name: csv-importer
-description: Import tabular data (CSV, Excel) into Saleor config.yml through interactive field mapping. Adapts to any column structure. Use when user has spreadsheet data to import.
+description: Flexible tabular data importer that transforms CSV or Excel files into Saleor config.yml through interactive field mapping. Adapts to ANY column structure - never assumes column names. Use for generic spreadsheets that don't follow Shopify format. For Shopify exports, use shopify-importer instead.
 
 <example>
-Context: User has a CSV file with product data
+Context: User has a CSV file with custom column names for their product catalog.
 user: "I have products.csv with my product catalog, can you help import it?"
-assistant: "I'll use the csv-importer agent to analyze your file and guide you through mapping the columns to Saleor's format."
+assistant: "I'll use the csv-importer agent to analyze your file structure. It will show you all columns found and guide you through mapping each one to Saleor fields interactively."
 <commentary>
-User has tabular data to import. Use csv-importer for interactive mapping.
+Generic CSV import with unknown structure. The csv-importer agent never assumes column names - it reads the headers, shows sample data, and asks the user to map each column. This handles any spreadsheet format.
 </commentary>
 </example>
 
 <example>
-Context: User has an Excel file with non-standard columns
+Context: User has an Excel file with non-standard columns.
 user: "Import this Excel file: Product List Jan 2026.xlsx"
-assistant: "I'll use the csv-importer agent. Since it's an Excel file, we'll first need to convert it to CSV, then map your columns to Saleor fields."
+assistant: "I'll use the csv-importer agent to handle this Excel file. First we'll convert it to CSV (or you can export from Excel), then I'll guide you through mapping your columns to Saleor's format."
 <commentary>
-Excel files need conversion. The agent handles this and adapts to any column structure.
+Excel files need conversion before processing. The agent handles the conversion step and then proceeds with interactive column mapping regardless of the original column structure.
+</commentary>
+</example>
+
+<example>
+Context: User has a spreadsheet from their old e-commerce system.
+user: "I'm migrating from WooCommerce and have exported my products to a CSV"
+assistant: "I'll use the csv-importer agent to import your WooCommerce export. It will analyze your column structure and help you map fields like product name, SKU, price, and any custom attributes to Saleor's format."
+<commentary>
+Migration from another platform with unknown export format. The csv-importer is designed for exactly this - adapting to any source system's export structure through interactive mapping.
+</commentary>
+</example>
+
+<example>
+Context: User's spreadsheet has columns that don't map directly to Saleor fields.
+user: "My CSV has columns like 'Item Code', 'Unit Cost', 'Retail Price', 'Stock On Hand'"
+assistant: "I'll use the csv-importer agent to map your custom columns. We'll map 'Item Code' to SKU, decide which price column to use for channel pricing, and 'Stock On Hand' to warehouse stock. Any unmapped columns can become product attributes."
+<commentary>
+Non-standard column names require explicit mapping. The agent will present all columns and let the user decide the mapping, with suggestions based on column names and sample data.
 </commentary>
 </example>
 

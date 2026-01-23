@@ -1,4 +1,5 @@
 ---
+name: configurator-import
 description: Import product data from CSV, Excel, or Shopify into config.yml with interactive field mapping
 allowed-tools: Bash, Read, Write, Edit, AskUserQuestion, Glob, Grep
 argument-hint: <file-path> [--source shopify]

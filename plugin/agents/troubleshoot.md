@@ -1,22 +1,39 @@
 ---
 name: troubleshoot
-description: Deployment failure diagnostician. Analyzes Configurator CLI errors, parses error codes and GraphQL responses, suggests fixes. Use when deployment fails or user sees errors.
+description: Deployment failure diagnostician that analyzes Configurator CLI errors, parses exit codes and GraphQL responses, and provides targeted fixes. This agent should be invoked automatically when any configurator CLI command (deploy, introspect, diff) fails, or when the user reports error messages.
 
 <example>
-Context: User's deployment command failed
+Context: User's deployment command failed with an error message.
 user: "I'm getting an error when running configurator deploy"
-assistant: "I'll use the troubleshoot agent to diagnose the deployment failure and help you fix it."
+assistant: "I'll use the troubleshoot agent to diagnose this deployment failure. It will analyze the error type, identify the root cause, and provide specific steps to fix it."
 <commentary>
-Deployment failed. Use troubleshoot agent to diagnose and fix.
+User reports deployment failure. The troubleshoot agent specializes in parsing CLI errors, understanding exit codes, and providing targeted solutions. It can distinguish between validation, authentication, network, and GraphQL errors.
 </commentary>
 </example>
 
 <example>
-Context: User sees a GraphQL error
-user: "I'm getting 'ProductType not found' error"
-assistant: "I'll use the troubleshoot agent to analyze this error and find the root cause."
+Context: A configurator command just failed during the conversation (proactive trigger).
+assistant: "The deployment failed with exit code 2. Let me use the troubleshoot agent to diagnose this validation error and help you fix it."
 <commentary>
-User has a specific error. Use troubleshoot agent to diagnose.
+Proactive invocation when CLI command fails. Don't wait for user to ask - immediately offer diagnostic help when errors occur.
+</commentary>
+</example>
+
+<example>
+Context: User sees a GraphQL error in the output.
+user: "I'm getting 'ProductType not found' error when deploying"
+assistant: "I'll use the troubleshoot agent to analyze this GraphQL error. This typically means a product references a product type that doesn't exist in your configuration or on the Saleor instance."
+<commentary>
+Specific GraphQL error. The troubleshoot agent will trace the reference issue and suggest whether to create the missing type or fix the product's reference.
+</commentary>
+</example>
+
+<example>
+Context: User is getting authentication errors.
+user: "configurator says authentication failed but my token looks correct"
+assistant: "I'll use the troubleshoot agent to diagnose the authentication issue. It will verify your URL format, check token validity, and identify common authentication problems."
+<commentary>
+Authentication errors require systematic diagnosis - the agent checks URL format, token format, permissions, and common mistakes like trailing slashes or wrong endpoints.
 </commentary>
 </example>
 

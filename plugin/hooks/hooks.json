@@ -1,6 +1,17 @@
 {
-  "description": "Saleor Configurator plugin hooks for context detection, validation, and deployment safety",
+  "description": "Saleor Configurator plugin hooks for context detection, validation, deployment safety, and task completion",
   "hooks": {
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Before stopping, verify task completeness for Saleor configuration work:\n\n**If user asked to modify config.yml:**\n- Was the file actually edited successfully?\n- Was validation suggested or run?\n- Are there unresolved errors or warnings?\n\n**If user asked to deploy:**\n- Was --dry-run shown first (unless user explicitly skipped)?\n- If deployment failed, was troubleshooting offered?\n- Were any critical errors left unaddressed?\n\n**If user asked to import data:**\n- Was the import completed?\n- Were all required columns mapped?\n- Was config-review suggested for the imported data?\n\n**If user asked to set up configuration:**\n- Was config.yml created?\n- Was config-review run on the generated file?\n\n**Decision:**\n- If task appears incomplete and user didn't explicitly say to stop → {\"decision\": \"block\", \"reason\": \"Task incomplete: [specific item]. Would you like me to continue?\"}\n- If task is complete OR user said to stop/cancel/that's enough → {\"decision\": \"approve\"}\n- If just answering a question (no action task) → {\"decision\": \"approve\"}"
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "matcher": "*",
@@ -48,7 +59,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "If the bash command was 'configurator deploy' or 'pnpm dev deploy', analyze the output:\n\n**On Success:**\n- Summarize changes: count of created, updated, deleted entities by type\n- Suggest verifying changes in Saleor Dashboard\n- Recommend running introspect to update local config if needed\n\n**On Failure:**\n- Identify the error type (validation, auth, network, GraphQL)\n- Provide specific guidance based on error\n- Offer to run the troubleshoot agent for deeper analysis\n\nProvide a concise, actionable summary."
+            "prompt": "Analyze the bash command output for Configurator CLI operations:\n\n**If command was 'configurator deploy' or 'pnpm dev deploy':**\n\nOn Success:\n- Summarize changes: count of created, updated, deleted entities by type\n- Suggest verifying changes in Saleor Dashboard\n- Recommend running introspect to update local config if needed\n\nOn Failure:\n- Identify error type (validation, auth, network, GraphQL)\n- Provide specific guidance based on error\n- Offer to run the troubleshoot agent for deeper analysis\n\n**If command was 'configurator introspect' or 'pnpm dev introspect':**\n\nOn Success:\n- Note that config.yml was generated/updated from live Saleor instance\n- Suggest reviewing the generated configuration for accuracy\n- Offer to run config-review agent for quality check\n- Remind about version control: consider committing config.yml\n\nOn Failure:\n- Check for authentication errors (verify SALEOR_TOKEN)\n- Check for network errors (verify SALEOR_API_URL)\n- Offer troubleshoot agent for diagnosis\n\n**If command was 'configurator diff' or 'pnpm dev diff':**\n\nOn Success:\n- Summarize what would change (creates, updates, deletes)\n- If deletions detected, warn explicitly\n- Suggest next steps (deploy if looks good, or edit config first)\n\nProvide a concise, actionable summary."
           }
         ]
       }

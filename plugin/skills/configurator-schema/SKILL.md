@@ -1,6 +1,7 @@
 ---
 name: configurator-schema
-description: Saleor Configurator config.yml schema and structure. Use when user mentions "config.yml", "YAML schema", "add product type", "create category", "entity schema", "validation rules", "config structure", "YAML format", or needs help with configuration file structure.
+version: 1.0.0
+description: Provides detailed documentation of the Saleor Configurator config.yml schema and structure. This skill should be invoked when the user needs help with YAML configuration structure, entity schemas, validation rules, field requirements, or understanding the difference between slug-based and name-based entity identification. Covers all entity types including channels, products, categories, and attributes.
 allowed-tools: Read, Grep, Glob
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: configurator-cli
-description: Saleor Configurator CLI commands and usage patterns. Use when user mentions "deploy", "introspect", "diff", "start", "configurator command", "run cli", "execute command", "push config", "pull config", or needs to run CLI operations against a Saleor instance.
+version: 1.0.0
+description: Provides comprehensive guidance for Saleor Configurator CLI commands and usage patterns. This skill should be invoked when the user asks about deploying configurations, introspecting stores, running diffs, or executing any CLI operations against a Saleor instance. Covers deploy, introspect, diff, and start commands with all flags and environment variables.
 allowed-tools: Bash, Read, Grep
 ---
 

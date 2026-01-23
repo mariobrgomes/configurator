@@ -1,4 +1,5 @@
 ---
+name: configurator-validate
 description: Comprehensive configuration validation with schema checks, best practices, and common mistake detection
 allowed-tools: Bash, Read, Grep, Glob
 argument-hint: [--strict]

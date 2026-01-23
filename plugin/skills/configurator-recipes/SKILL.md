@@ -1,6 +1,7 @@
 ---
 name: configurator-recipes
-description: Pre-built Saleor configuration templates for common store types. Use when user mentions "recipe", "template", "fashion store", "electronics store", "subscription", "starter config", "pre-built configuration", "quick start", or wants a complete store setup example.
+version: 1.0.0
+description: Provides pre-built Saleor configuration templates for common e-commerce store types including fashion retail, electronics, and subscription services. This skill should be invoked when the user wants to start with a template, needs a complete store setup example, or is looking for best-practice configurations. Templates include channels, product types, categories, and attributes tailored to each business model.
 allowed-tools: Read, Write
 ---
 
@@ -16,9 +17,23 @@ Pre-built configuration templates for quickly setting up common e-commerce store
 | **Electronics Store** | Tech products, gadgets | Specs attributes, warranty info |
 | **Subscription Service** | Recurring products, SaaS | Subscription types, billing cycles |
 
+**Note**: For a blank starting point, use `/configurator-init` which creates a skeleton with the correct structure but no business-specific content.
+
 ## Using Recipes
 
 ### Quick Start
+
+**For structure only** (blank slate):
+```bash
+/configurator-init               # Creates skeleton config.yml
+```
+
+**For pre-built store** (complete recipe):
+```bash
+/configurator-setup              # Interactive wizard with recipe selection
+```
+
+### Manual Copy
 
 1. Choose a recipe that matches your business
 2. Copy the template to your project

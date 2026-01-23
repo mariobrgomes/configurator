@@ -1,6 +1,7 @@
 ---
 name: saleor-domain
-description: Saleor e-commerce domain knowledge including entities, relationships, and GraphQL types. Use when user mentions "Saleor", "product", "channel", "attribute", "warehouse", "GraphQL", "entity relationships", "checkout", "order", or needs help understanding Saleor concepts.
+version: 1.0.0
+description: Provides comprehensive Saleor e-commerce domain knowledge including entity types, relationships, identifier rules, and GraphQL patterns. This skill should be invoked when the user needs to understand Saleor concepts, entity relationships, the difference between product-level and variant-level attributes, or how channels, warehouses, and shipping zones interact. Essential for understanding how Configurator maps to Saleor's data model.
 allowed-tools: Read, WebFetch
 ---
 

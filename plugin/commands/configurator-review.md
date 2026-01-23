@@ -1,4 +1,5 @@
 ---
+name: configurator-review
 description: Launch comprehensive configuration review agent for deep analysis and improvement suggestions
 allowed-tools: Task
 ---
