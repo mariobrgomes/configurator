@@ -18,6 +18,7 @@ import type {
   SaleorConfig,
   TaxConfigurationInput,
 } from "../../modules/config/schema/schema";
+import { ProductError } from "../../modules/product/errors";
 import type { Attribute as ProductAttributeMeta } from "../../modules/product/repository";
 import { StageAggregateError } from "./errors";
 import type { DeploymentStage } from "./types";
@@ -720,6 +721,18 @@ export const productsStage: DeploymentStage = {
       if (error instanceof StageAggregateError) {
         throw error;
       }
+
+      // Convert ProductError with structured failures to StageAggregateError
+      // This maintains the boundary: ProductService throws ProductError, stages convert to StageAggregateError
+      if (error instanceof ProductError && error.failures) {
+        throw new StageAggregateError(
+          "Managing products",
+          // Convert readonly array to mutable for StageAggregateError constructor
+          [...error.failures],
+          error.successes ? [...error.successes] : []
+        );
+      }
+
       throw new Error(
         `Failed to manage products: ${error instanceof Error ? error.message : String(error)}`
       );

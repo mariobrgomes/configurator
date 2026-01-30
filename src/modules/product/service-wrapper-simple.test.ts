@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { BulkOperationFailure } from "./errors";
 import { ProductError } from "./errors";
 import { ProductService } from "./product-service";
 import { ProductRepository } from "./repository";
@@ -119,5 +120,58 @@ describe("ServiceErrorWrapper - Simple Integration Test", () => {
     }
 
     consoleSpy.mockRestore();
+  });
+
+  describe("ProductError with bulk operation failures", () => {
+    it("should store structured failures for bulk operations", () => {
+      const failures: BulkOperationFailure[] = [
+        { entity: "Product A", error: new Error("Failed to create") },
+        { entity: "Product B", error: new Error("Invalid category") },
+      ];
+      const successes = ["Product C", "Product D"];
+
+      const error = new ProductError(
+        "Failed to bootstrap 2 of 4 products",
+        "PRODUCT_BULK_BOOTSTRAP_ERROR",
+        failures.map((f) => `${f.entity}: ${f.error.message}`),
+        failures,
+        successes
+      );
+
+      expect(error).toBeInstanceOf(ProductError);
+      expect(error.message).toBe("Failed to bootstrap 2 of 4 products");
+      expect(error.failures).toEqual(failures);
+      expect(error.successes).toEqual(successes);
+      expect(error.failures).toHaveLength(2);
+      expect(error.successes).toHaveLength(2);
+    });
+
+    it("should preserve failure details for deployment layer extraction", () => {
+      const failures: BulkOperationFailure[] = [
+        { entity: "Product A", error: new Error("Network timeout") },
+      ];
+
+      const error = new ProductError(
+        "Failed to bootstrap 1 of 1 products",
+        "PRODUCT_BULK_BOOTSTRAP_ERROR",
+        ["Product A: Network timeout"],
+        failures,
+        []
+      );
+
+      // Verify that the deployment layer can extract failure details
+      expect(error.failures?.[0].entity).toBe("Product A");
+      expect(error.failures?.[0].error.message).toBe("Network timeout");
+    });
+
+    it("should work without failures field for backward compatibility", () => {
+      // Simple ProductError without bulk operation data
+      const error = new ProductError("Simple error message", "PRODUCT_ERROR");
+
+      expect(error).toBeInstanceOf(ProductError);
+      expect(error.message).toBe("Simple error message");
+      expect(error.failures).toBeUndefined();
+      expect(error.successes).toBeUndefined();
+    });
   });
 });
