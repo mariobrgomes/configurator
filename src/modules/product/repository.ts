@@ -162,8 +162,6 @@ export type ProductVariantBulkUpdateResult = NonNullable<
   NonNullable<ResultOf<typeof productVariantBulkUpdateMutation>>["productVariantBulkUpdate"]
 >;
 
-// TODO: Add productChannelListingUpdate mutation in separate commit
-
 const getProductByNameQuery = graphql(`
   query GetProductByName($name: String!) {
     products(filter: { search: $name }, first: 100) {
@@ -1029,12 +1027,7 @@ export class ProductRepository implements ProductOperations {
     >[number];
 
     type ProductsPageResult = {
-      data?: {
-        products?: {
-          pageInfo?: { endCursor: string | null; hasNextPage: boolean } | null;
-          edges?: ProductsEdge[];
-        } | null;
-      };
+      data?: ResultOf<typeof getProductsBySlugsBulkPageQuery>;
       error?: CombinedError;
     };
 
@@ -1057,7 +1050,12 @@ export class ProductRepository implements ProductOperations {
       edges.push(...(page.edges || []));
 
       if (!page.pageInfo?.hasNextPage) break;
-      after = page.pageInfo.endCursor || null;
+      const nextCursor = page.pageInfo.endCursor;
+      if (!nextCursor) {
+        logger.warn("API returned hasNextPage=true but no endCursor - stopping pagination");
+        break;
+      }
+      after = nextCursor;
 
       // Rate limiting delay (50ms matches existing pattern)
       await new Promise((resolve) => setTimeout(resolve, 50));

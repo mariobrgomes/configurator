@@ -1,3 +1,4 @@
+import { cliConsole } from "../../cli/console";
 import type { AttributeValueInput } from "../../lib/graphql/graphql-types";
 import { logger } from "../../lib/logger";
 import { ServiceErrorWrapper } from "../../lib/utils/error-wrapper";
@@ -994,8 +995,6 @@ export class ProductService {
 
   /**
    * Fetches existing products and categorizes inputs into create vs update buckets.
-   * Uses Map-based lookup for O(1) performance.
-   * Uses functional reduce pattern without spread operator for efficiency.
    */
   private async categorizeProductInputs(products: ProductInput[]): Promise<{
     toCreate: ProductInput[];
@@ -1011,7 +1010,7 @@ export class ProductService {
         .map((p) => [p.slug, p] as const)
     );
 
-    // Categorize products using functional reduce (no spread for O(n) performance)
+    // Categorize products using Map accumulator
     const { toCreate, toUpdate } = products.reduce(
       (acc, productInput) => {
         const existing = existingProductsMap.get(productInput.slug);
@@ -1102,12 +1101,10 @@ export class ProductService {
     const created: Product[] = [];
 
     try {
-      // Build all inputs in parallel
       const createInputs = await Promise.all(
         inputs.map((input) => this.buildProductCreateInput(input))
       );
 
-      // Execute bulk create with error tolerance
       const result = await this.repository.bulkCreateProducts({
         products: createInputs,
         errorPolicy: "IGNORE_FAILED",
@@ -1127,10 +1124,16 @@ export class ProductService {
         }
       });
 
-      // Handle global errors
+      // Handle global errors - surface them to users via failures
       if (result.errors && result.errors.length > 0) {
+        const globalErrorMsg = result.errors.map((e) => e.message).join(", ");
         logger.warn("Global errors during bulk product creation", {
           errors: result.errors,
+        });
+        // Add global error as a failure so users see the root cause
+        failures.push({
+          entity: "Bulk operation",
+          error: new Error(`Global error: ${globalErrorMsg}`),
         });
       }
     } catch (error) {
@@ -1222,10 +1225,14 @@ export class ProductService {
             updateChannels: channelInputs,
           });
         } catch (error) {
-          // Graceful degradation - log but continue
+          // Graceful degradation - log and warn user, but continue
+          const errorMsg = error instanceof Error ? error.message : String(error);
           logger.warn(`Failed to update channel listings for product ${input.name}`, {
-            error: error instanceof Error ? error.message : String(error),
+            error: errorMsg,
           });
+          cliConsole.warn(
+            `  ${cliConsole.icon("warning")} Channel listings failed for ${input.name}: ${errorMsg}`
+          );
         }
       })
     );
@@ -1262,7 +1269,6 @@ export class ProductService {
   /**
    * Groups variants by product ID for API compliance.
    * Saleor bulk variant create requires one product per call.
-   * Uses Map-based reduce for O(n) performance without spread operator.
    */
   private groupVariantsByProduct<T extends { productId: string }>(contexts: T[]): Map<string, T[]> {
     return contexts.reduce((grouped, context) => {
@@ -1365,11 +1371,11 @@ export class ProductService {
           errorPolicy: "IGNORE_FAILED",
         });
 
-        // Process per-variant errors
+        // Process per-variant errors with path context
         result.results?.forEach(({ errors }, index) => {
           if (errors && errors.length > 0) {
             const variant = variants[index];
-            const errorMsg = errors.map((e) => e.message).join(", ");
+            const errorMsg = errors.map((e) => `${e.path || ""}: ${e.message}`.trim()).join(", ");
             failures.push({
               entity: `${variant.productInput.name} - ${variant.variantInput.sku}`,
               error: new Error(errorMsg),
@@ -1421,10 +1427,14 @@ export class ProductService {
         try {
           await this.syncProductMedia(product, input.media);
         } catch (error) {
-          // Graceful degradation - log but continue
+          // Graceful degradation - log and warn user, but continue
+          const errorMsg = error instanceof Error ? error.message : String(error);
           logger.warn(`Failed to sync media for product ${input.name}`, {
-            error: error instanceof Error ? error.message : String(error),
+            error: errorMsg,
           });
+          cliConsole.warn(
+            `  ${cliConsole.icon("warning")} Media sync failed for ${input.name}: ${errorMsg}`
+          );
         }
       })
     );
